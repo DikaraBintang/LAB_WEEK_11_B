@@ -1,0 +1,21 @@
+1. private fun openImageCapture() {
+        photoInfo =
+            providerFileManager.generatePhotoUri(System.currentTimeMillis())
+        takePictureLauncher.launch(photoInfo!!.uri)
+    }
+
+2a. URI mengacu pada Content URI yang disediakan oleh MediaStore Android. URI ini berfungsi sebagai pengenal unik dan penunjuk lokasi untuk file media di dalam database sistem. Ini adalah yang digunakan oleh aplikasi lain (seperti galeri atau aplikasi kamera) untuk mengakses atau merujuk ke file gambar.
+
+2b. relativePath mengacu pada lokasi file dalam penyimpanan bersama perangkat, relatif terhadap root koleksi media standar (misalnya, direktori DCIM atau Pictures). Contohnya, bisa berupa "Pictures/MyCameraApp/". Ini digunakan oleh MediaStore saat menyisipkan atau memperbarui file untuk menempatkannya dengan benar di sistem file.
+
+3. Permintaan URI: Aplikasi Anda memanggil fungsi (seperti getUri() di Q1) untuk membuat jalur file sementara pada penyimpanan eksternal/bersama perangkat dan menggunakan FileProvider untuk mendapatkan Content URI untuk jalur tersebut.
+
+Mulai Kamera: Aplikasi Anda membuat Intent untuk aplikasi kamera (ACTION_IMAGE_CAPTURE) dan meneruskan Content URI (dari langkah 1) ke Intent menggunakan MediaStore.EXTRA_OUTPUT.
+
+Gambar Diambil: Pengguna mengambil gambar di aplikasi kamera. Aplikasi kamera kemudian menulis data gambar ke jalur file sementara yang ditunjuk oleh Content URI yang diterimanya.
+
+Hasil Aktivitas: Aplikasi kamera kembali ke aplikasi Anda, memicu fungsi onActivityResult() atau yang setara.
+
+Sisipkan ke MediaStore: Aplikasi Anda menggunakan ContentResolver untuk menyisipkan file yang baru dibuat ke dalam database MediaStore sistem. Ini biasanya melibatkan pembacaan metadata file (ukuran, tipe MIME, dll.) dan menyimpan catatan yang menautkan jalur file ke Content URI MediaStore baru dan permanen.
+
+File Tersimpan: File gambar kini sepenuhnya dapat diakses dan terlihat oleh semua aplikasi galeri lain di perangkat, karena telah diindeks dalam MediaStore.
